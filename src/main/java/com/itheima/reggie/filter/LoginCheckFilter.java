@@ -34,6 +34,7 @@ public class LoginCheckFilter implements Filter {
                 "/front/**",
                 "/common/**",
                 "/user/login",
+                "/swagger-ui.html",
                 "/dish/test"
         };
         boolean check = check(urls, requestURI);

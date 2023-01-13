@@ -6,7 +6,8 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
-
+ # profiles:
+ #   active: test  切换配置文件
   application:
     name: reggie_take_out
     #配置数据源
@@ -39,3 +40,4 @@ mybatis-plus:
 reggie:
   file:
     path: D:/img/
+
