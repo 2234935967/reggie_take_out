@@ -41,6 +41,7 @@ public class UserController {
        request.getSession().removeAttribute("user");
        return R.success("退出成功");
     }
+
     /**
      * 发送手机短信验证码
      * @param user
@@ -106,6 +107,8 @@ public class UserController {
                 userService.save(user);
             }
             session.setAttribute("user",user.getId());
+            //删除
+            //redisTemplate.delete(phone);
             return R.success(user);
        // }
       //  return R.error("登录失败");
