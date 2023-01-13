@@ -12,6 +12,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -29,10 +31,12 @@ public class AddressBookController {
     @Resource
     private AddressBookService addressBookService;
 
+
     /**
      * 新增
      */
     @ApiOperation("添加用户地址")
+   // @CacheEvict(value = "address",allEntries = true)
     @PostMapping
     public R<AddressBook> save(
             @ApiParam("参数：用户地址") @RequestBody AddressBook addressBook
@@ -44,6 +48,7 @@ public class AddressBookController {
     }
 
     @ApiOperation("设置默认地址")
+    //@CacheEvict(value = "address",key = "'address_default_*'")
     @PutMapping("default")
     public R<AddressBook> setDefault(
            @ApiParam("参数：用户id") @RequestBody AddressBook addressBook
@@ -79,6 +84,7 @@ public class AddressBookController {
      * 查询默认地址
      */
     @ApiOperation("查询默认地址")
+    //@Cacheable(value = "address",key = "'address_default_'+#result.data.userId")
     @GetMapping("default")
     public R<AddressBook> getDefault() {
         LambdaQueryWrapper<AddressBook> queryWrapper = new LambdaQueryWrapper<>();
@@ -96,6 +102,7 @@ public class AddressBookController {
     }
 
     @ApiOperation("查询指定用户的全部地址")
+    //@Cacheable(value = "address",key = "address_")
     @GetMapping("/list")
     public R<List<AddressBook>> list(@ApiParam("用户id") AddressBook addressBook) {
         addressBook.setUserId(BaseContext.getCurrentId());
