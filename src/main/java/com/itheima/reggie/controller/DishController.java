@@ -89,8 +89,10 @@ public class DishController {
             return dishDto;
 
         }).collect(Collectors.toList());
+
         //redis为空
         redisTemplate.opsForValue().set(key,dishDtos,30, TimeUnit.MINUTES);
+
         return R.success(dishDtos);
     }
 

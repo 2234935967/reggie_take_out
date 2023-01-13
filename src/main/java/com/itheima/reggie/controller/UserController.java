@@ -3,6 +3,7 @@ package com.itheima.reggie.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.itheima.reggie.pojo.User;
 import com.itheima.reggie.service.UserService;
+import com.itheima.reggie.util.BaseContext;
 import com.itheima.reggie.util.R;
 import com.itheima.reggie.util.ValidateCodeUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -29,8 +32,17 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+
     @Autowired
     private RedisTemplate redisTemplate;
+
+
+    //user/loginout
+    @PostMapping("/loginout")
+    public R<String> loginout(HttpServletRequest request){
+       request.getSession().removeAttribute("user");
+       return R.success("退出成功");
+    }
 
     /**
      * 发送手机短信验证码
