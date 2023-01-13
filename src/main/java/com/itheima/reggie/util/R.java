@@ -1,15 +1,18 @@
 package com.itheima.reggie.util;
 
 import lombok.Data;
+
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * 返回结果，存储服务器响应的数据
  * @param <T>
+ * implements Serializable：实现序列化，使得spring cache 能缓存该类
  */
 @Data
-public class R<T> {
+public class R<T> implements Serializable {
 
     private Integer code; //编码：1成功，0和其它数字为失败
 

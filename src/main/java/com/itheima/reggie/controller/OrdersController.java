@@ -15,6 +15,8 @@ import com.itheima.reggie.util.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
 /**
  * @author shkstart
  * @create 2023-01-08 14:22
+ * 订单管理
  */
 @Slf4j
 @RestController
@@ -45,6 +48,7 @@ public class OrdersController {
     }
 
     @PutMapping
+   // @CacheEvict(value = "userpage",allEntries = true)
     public R<String> update(@RequestBody Orders orders){
 
         ordersService.updateById(orders);
@@ -77,7 +81,9 @@ public class OrdersController {
         return R.success(DtoPage);
     }
 
+
     @PostMapping("/submit")
+   // @CacheEvict(value = "userpage",allEntries = true)
     public R<String> stringR(@RequestBody Orders orders){
         //IdWorker.getId()
         ordersService.submit(orders);
@@ -85,6 +91,7 @@ public class OrdersController {
     }
     //userPage?page=1&pageSize=1
     @GetMapping("/userPage")
+    //@Cacheable(value = "userpage",key = "#page+'_'+#pageSize")
     public R<Page> pageR(Integer page,Integer pageSize){
         Page<Orders> ordersPage = new Page<>(page,pageSize);
         Page<OrdersDto> DtoPage = new Page<>();

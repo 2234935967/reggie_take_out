@@ -15,6 +15,8 @@ import com.itheima.reggie.util.R;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,13 +34,17 @@ public class SetmealController {
     @Autowired
     SetmealService setmealService;
 
+    final static String setmealCache = "setmealCache";
+
     @Autowired
     SetmealDishService setmealDishService;
 
     @Autowired
     CategoryService categoryService;
-
-
+    //先看缓存中有没有数据，没就调用方法并把返回值放入缓存中，有就返回缓存中的内容
+    @Cacheable(value = setmealCache, //给该类取个名
+            key = "#setmeal.categoryId+'_'+#setmeal.status", //设置key
+            unless = "#result == null") //满足条件不缓存 #result为返回值
     @GetMapping("/list")
     public R list(Setmeal setmeal) {
         LambdaQueryWrapper<Setmeal> queryWapper = new LambdaQueryWrapper<>();
@@ -55,6 +61,9 @@ public class SetmealController {
      * @param ids
      * @return
      */
+    //从缓存中删除注解
+    @CacheEvict(value = setmealCache,
+            allEntries = true) //allEntries删除该分类下的所有
     @PostMapping("/status/{sts}")
     public R<String> setStatus(
             @PathVariable Integer sts,
@@ -77,6 +86,7 @@ public class SetmealController {
     }
 
     //修改
+    @CacheEvict(value = setmealCache,allEntries = true)
     @PutMapping
     public R<String> update(@RequestBody SetmealDto setmealDto){
         setmealService.updateById(setmealDto);
@@ -120,6 +130,7 @@ public class SetmealController {
      * @param ids
      * @return
      */
+    @CacheEvict(value = setmealCache,allEntries = true)
     @DeleteMapping
     public R<String> delete(@RequestParam List<Long> ids) {
         setmealService.deleteWithDto(ids);
@@ -132,6 +143,7 @@ public class SetmealController {
      * @param setmealDto
      * @return
      */
+    @CacheEvict(value = setmealCache,allEntries = true)
     @PostMapping
     public R<String> add(@RequestBody SetmealDto setmealDto) {
         setmealService.saveWithDto(setmealDto);
