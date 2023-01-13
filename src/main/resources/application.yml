@@ -15,6 +15,12 @@ spring:
       url: jdbc:mysql://localhost:13306/reggie?serverTimezone=GMT%2B8&characterEncoding=utf-8&useSSL=false
       username: root
       password: 751188
+  redis:
+    database: 0
+    port: 6379
+    host: 192.168.246.131
+    password: 751188
+
 mybatis-plus:
   configuration:
     #在映射实体或者属性时，将数据库中表名和字段名中的下划线去掉，按照驼峰命名法映射
