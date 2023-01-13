@@ -8,6 +8,7 @@ import com.itheima.reggie.util.ValidateCodeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author shkstart
@@ -26,6 +28,9 @@ import java.util.Map;
 public class UserController {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     /**
      * 发送手机短信验证码
@@ -45,8 +50,9 @@ public class UserController {
             //调用阿里云提供的短信服务API完成发送短信
             //SMSUtils.sendMessage("瑞吉外卖","",phone,code);
 
-            //需要将生成的验证码保存到Session
-            session.setAttribute(phone,code);
+            //需要将生成的验证码保存到redis
+            //session.setAttribute(phone,code);
+            redisTemplate.opsForValue().set(phone,code,5, TimeUnit.MINUTES);
 
             return R.success("手机验证码短信发送成功");
         }
@@ -72,6 +78,8 @@ public class UserController {
 
         //从Session中获取保存的验证码
         //Object codeInSession = session.getAttribute(phone);
+        //从redis中获取
+       //codeInSession=redisTemplate.opsForValue().
 
         //进行验证码的比对（页面提交的验证码和Session中保存的验证码比对）
         //if(codeInSession != null && codeInSession.equals(code)){
@@ -89,6 +97,8 @@ public class UserController {
                 userService.save(user);
             }
             session.setAttribute("user",user.getId());
+            //删除
+            //redisTemplate.delete(phone);
             return R.success(user);
        // }
       //  return R.error("登录失败");
