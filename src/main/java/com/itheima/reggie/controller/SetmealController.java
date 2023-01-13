@@ -15,6 +15,8 @@ import com.itheima.reggie.util.R;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,22 +39,6 @@ public class SetmealController {
 
     @Autowired
     CategoryService categoryService;
-
-    ///dish/1612007176669343746
-   /* @GetMapping("/dish/{id}")
-    public R<Setmeal> dish(@PathVariable Long id){
-        //SetmealDto dto = new SetmealDto();
-        Setmeal setmeal = setmealService.getById(id);
-
-        *//*LambdaQueryWrapper<SetmealDish> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(SetmealDish::getSetmealId,id).orderByDesc(SetmealDish::getSort);
-        List<SetmealDish> list = setmealDishService.list(wrapper);
-
-        dto.setSetmealDishes(list);
-        BeanUtils.copyProperties(setmeal,dto);*//*
-
-        return R.success(setmeal);
-    }*/
 
 
     @GetMapping("/list")
