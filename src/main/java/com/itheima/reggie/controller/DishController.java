@@ -45,6 +45,9 @@ public class DishController {
     @Autowired
     DishFlavorService dishFlavorService;
 
+    @Autowired
+    RedisTemplate redisTemplate;
+
     @GetMapping("/test")
     public R<List<Dish>> testAll(){
         List<Dish> dishes = dishService.listAll();
