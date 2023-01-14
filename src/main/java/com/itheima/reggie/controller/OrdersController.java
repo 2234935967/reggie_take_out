@@ -17,9 +17,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -37,6 +39,8 @@ public class OrdersController {
     private OrderDetailService orderDetailService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     ///order/again
     @PostMapping("/again")
@@ -50,8 +54,8 @@ public class OrdersController {
     @PutMapping
    // @CacheEvict(value = "userpage",allEntries = true)
     public R<String> update(@RequestBody Orders orders){
-
         ordersService.updateById(orders);
+        redisTemplate.delete("order*");
         return R.success("ok");
     }
 
@@ -87,14 +91,24 @@ public class OrdersController {
     public R<String> stringR(@RequestBody Orders orders){
         //IdWorker.getId()
         ordersService.submit(orders);
+        redisTemplate.delete("order*");
         return R.success("ok");
     }
+
     //userPage?page=1&pageSize=1
     @GetMapping("/userPage")
     //@Cacheable(value = "userpage",key = "#page+'_'+#pageSize")
     public R<Page> pageR(Integer page,Integer pageSize){
+        Page<OrdersDto> DtoPage = null;
+        Long userId = BaseContext.getCurrentId();
+        String key = "order_"+userId+"_"+page+"_"+pageSize;
+        DtoPage= (Page<OrdersDto>) redisTemplate.opsForValue().get(key);
+        if (DtoPage != null){
+            return R.success(DtoPage);
+        }
+
         Page<Orders> ordersPage = new Page<>(page,pageSize);
-        Page<OrdersDto> DtoPage = new Page<>();
+        DtoPage = new Page<>();
 
         //查询到订单所有内容
         LambdaQueryWrapper<Orders> queryWrapper = new LambdaQueryWrapper<>();
@@ -116,7 +130,7 @@ public class OrdersController {
             return dto;
         }).collect(Collectors.toList());
         DtoPage.setRecords(dtolist);
-
+        redisTemplate.opsForValue().set(key,DtoPage,30, TimeUnit.MINUTES);
         return R.success(DtoPage);
     }
 }
