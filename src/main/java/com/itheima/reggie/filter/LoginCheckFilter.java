@@ -34,8 +34,11 @@ public class LoginCheckFilter implements Filter {
                 "/front/**",
                 "/common/**",
                 "/user/login",
-                "/swagger-ui.html",
-                "/dish/test"
+                //下面为swagger冲突解决
+                "/doc.html",
+                "/webjars/**",
+                "/swagger-resources",
+                "/v2/api-docs"
         };
         boolean check = check(urls, requestURI);
         //放行不拦截的请求

@@ -7,9 +7,7 @@ import com.itheima.reggie.service.ShoppingCartService;
 import com.itheima.reggie.util.BaseContext;
 import com.itheima.reggie.util.MyException;
 import com.itheima.reggie.util.R;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,6 +36,9 @@ public class ShoppingCartController {
     }
     //shoppingCart/sub
     @ApiOperation("减少数量")
+    @ApiImplicitParams({                                             //是否必须
+            @ApiImplicitParam(name = "shoppingCart",value = "购物车",required = true)
+    })
     @PostMapping("/sub")
     public R<ShoppingCart> sub(@RequestBody ShoppingCart shoppingCart){
         //查询到该商品
